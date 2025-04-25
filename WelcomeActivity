@@ -1,0 +1,35 @@
+public class WelcomeActivity extends AppCompatActivity {
+
+    private TextView welcomeTextView, loginDateTextView;
+    private Button logoutButton;
+    private SharedPreferences sharedPreferences;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_welcome);
+
+        sharedPreferences = getSharedPreferences("LoginPrefs", MODE_PRIVATE);
+
+        welcomeTextView = findViewById(R.id.welcomeTextView);
+        loginDateTextView = findViewById(R.id.loginDateTextView);
+        logoutButton = findViewById(R.id.logoutButton);
+
+        // دریافت زمان ورود
+        long loginTime = sharedPreferences.getLong("loginTime", 0);
+        if (loginTime != 0) {
+            String formattedDate = dateFormat.format(new Date(loginTime));
+            loginDateTextView.setText("تاریخ ورود: " + formattedDate);
+        }
+
+        logoutButton.setOnClickListener(v -> {
+            // حذف اطلاعات ورود
+            sharedPreferences.edit().clear().apply();
+
+            // بازگشت به صفحه ورود
+            startActivity(new Intent(WelcomeActivity.this, LoginActivity.class));
+            finish();
+        });
+    }
+}
